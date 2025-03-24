@@ -28,6 +28,30 @@
   ],
   "routes": [
     {
+      "src": "/api/users/login",
+      "dest": "/api/users.js"
+    },
+    {
+      "src": "/api/users/get",
+      "dest": "/api/users.js"
+    },
+    {
+      "src": "/api/media/upload-image",
+      "dest": "/api/media.js"
+    },
+    {
+      "src": "/api/media/upload-audio",
+      "dest": "/api/media.js"
+    },
+    {
+      "src": "/api/media/list",
+      "dest": "/api/media.js"
+    },
+    {
+      "src": "/api/media/get",
+      "dest": "/api/media.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1.js"
     },
