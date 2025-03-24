@@ -28,36 +28,8 @@
   ],
   "routes": [
     {
-      "src": "/api/get-media",
-      "dest": "/api/media.js"
-    },
-    {
-      "src": "/api/list-media",
-      "dest": "/api/media.js"
-    },
-    {
-      "src": "/api/upload-image",
-      "dest": "/api/media.js"
-    },
-    {
-      "src": "/api/upload-audio",
-      "dest": "/api/media.js"
-    },
-    {
-      "src": "/api/login",
-      "dest": "/api/user-auth.js"
-    },
-    {
-      "src": "/api/get-users",
-      "dest": "/api/user-auth.js"
-    },
-    {
-      "src": "/api/db-test",
-      "dest": "/api/db-utils.js"
-    },
-    {
-      "src": "/api/test",
-      "dest": "/api/db-utils.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
     },
     {
       "src": "/",
@@ -89,10 +61,10 @@
     }
   ],
   "env": {
-    "MONGODB_URI": "${MONGODB_URI}",
-    "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
-    "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-    "AWS_REGION": "${AWS_REGION}",
-    "AWS_S3_BUCKET": "${AWS_S3_BUCKET}"
+    "MONGODB_URI": "@mongodb_uri",
+    "AWS_ACCESS_KEY_ID": "@aws_access_key_id",
+    "AWS_SECRET_ACCESS_KEY": "@aws_secret_access_key",
+    "AWS_REGION": "@aws_region",
+    "AWS_S3_BUCKET": "@aws_s3_bucket"
   }
 } 
