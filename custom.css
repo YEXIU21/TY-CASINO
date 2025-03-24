@@ -1,0 +1,8 @@
+/* Custom styles to adjust positioning */
+body {
+    padding-bottom: 10vh !important; /* Move form up by adding padding to the bottom */
+}
+
+.container {
+    margin-top: -50px; /* Move the container up by 50px */
+} 

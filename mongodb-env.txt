@@ -1,0 +1,6 @@
+# MongoDB Environment Variable for Vercel
+# Copy and paste this connection string for the MONGODB_URI variable in Vercel
+
+MONGODB_URI=mongodb+srv://Tycasino:Tycasino123@cluster0.px4v3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+# Make sure to add this environment variable in your Vercel project settings 

